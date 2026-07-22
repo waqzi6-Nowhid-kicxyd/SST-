@@ -225,13 +225,27 @@ async function showShuffle(type){
 }
 
 function randomTask(type){
-  const list = window.SST_TASKS[type] || [];
+  const fallback = {
+    intro: { title:"じこしょうかい", text:"すきなものを ひとつ おしえてね。", emoji:"👋", image:"" },
+    sst: { title:"こんなとき どうする？", text:"せんせいと いっしょに かんがえよう。", emoji:"💭", image:"" },
+    move: { title:"そのばで ジャンプ！", text:"3かい ジャンプしよう。", emoji:"🦘", image:"" },
+    event: { title:"みんなで はくしゅ", text:"みんなで はくしゅしよう。", emoji:"👏", image:"", effect:"none" }
+  };
+
+  const source = window.SST_TASKS;
+  if(!source || !Array.isArray(source[type]) || source[type].length === 0){
+    console.warn("questions.js が読み込めていないか、問題が空です:", type);
+    return fallback[type];
+  }
+
+  const list = source[type];
   return list[Math.floor(Math.random()*list.length)];
 }
 
 function showTask(type){
-  const task = randomTask(type);
-  state.pendingTask = {type, task};
+  try{
+    const task = randomTask(type);
+    state.pendingTask = {type, task};
 
   const genreInfo = {
     intro:["自己紹介","#aadaf6","👋"],
@@ -255,9 +269,26 @@ function showTask(type){
     taskEmoji.textContent = task.emoji || icon;
   }
 
-  taskOverlay.classList.add("show");
-  taskOverlay.setAttribute("aria-hidden","false");
-  statusText.textContent = "おだいに ちょうせん！";
+    taskOverlay.classList.add("show");
+    taskOverlay.setAttribute("aria-hidden","false");
+    statusText.textContent = "おだいに ちょうせん！";
+  }catch(error){
+    console.error(error);
+    state.pendingTask = {
+      type:"event",
+      task:{title:"みんなで はくしゅ", text:"みんなで はくしゅしよう。", emoji:"👏", image:"", effect:"none"}
+    };
+    taskGenre.textContent = "⭐ イベント";
+    taskGenre.style.background = "#ffd67a";
+    taskImage.hidden = true;
+    taskEmoji.hidden = false;
+    taskEmoji.textContent = "👏";
+    taskTitle.textContent = "みんなで はくしゅ";
+    taskText.textContent = "みんなで はくしゅしよう。";
+    taskOverlay.classList.add("show");
+    taskOverlay.setAttribute("aria-hidden","false");
+    statusText.textContent = "おだいに ちょうせん！";
+  }
 }
 
 async function applyTaskEffect(){

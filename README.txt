@@ -1,33 +1,32 @@
-# SSTすごろく V1
+SSTすごろく V1.1
 
-## 起動方法
-index.html をダブルクリックしてください。
+【GitHub Pagesへのアップロード】
+次のファイルとフォルダを、すべて同じリポジトリの一番上に置いてください。
 
-## 問題を追加する方法
-data/questions.js を開き、各ジャンルの配列へ次の形式で追加します。
+index.html
+styles.css
+app.js
+questions.js
+assets フォルダ
+README.txt
 
-{ title: "問題タイトル", text: "説明文", emoji: "🍎", image: "" }
+※ index.html だけでは動きません。
+※ questions.js がない場合も停止しないよう修正していますが、登録した問題は表示されません。
 
-## 画像を使う方法
-1. assets/tasks フォルダへ PNG または JPG を入れます。
-2. questions.js の image にパスを指定します。
+【問題を追加する場所】
+questions.js を編集します。
 
 例：
-{ title: "好きな食べ物は？", text: "ひとつ教えてね。", emoji: "", image: "assets/tasks/favorite-food.png" }
+{ title: "すきな たべものは？", text: "ひとつ教えてね。", emoji: "🍓", image: "" }
 
-## ジャンル
-- intro：自己紹介
-- sst：SST問題
-- move：運動
-- event：イベント
+【画像を追加する方法】
+1. assets/tasks に画像を追加
+2. questions.js の image に指定
 
-## 主な仕様
-- 2〜5人
-- 愛称入力
-- 20マス
-- サイコロ自動進行
-- 順番自動管理
-- 1回休み対応
-- カードシャッフル演出
-- ランダム出題
-- 全画面表示対応
+例：
+{ title: "すきな たべものは？", text: "ひとつ教えてね。", emoji: "", image: "assets/tasks/favorite-food.png" }
+
+【今回の修正】
+・questions.js を data フォルダからルート直下へ移動
+・GitHub Pagesのキャッシュ対策を追加
+・問題ファイルを読み込めなくても、シャッフル後に停止しないよう修正
