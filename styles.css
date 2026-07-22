@@ -1,0 +1,147 @@
+*{box-sizing:border-box}
+:root{
+  --bg:#eaf7ff;
+  --ink:#3e3a34;
+  --panel:#fffdf7;
+  --shadow:0 10px 30px rgba(72,104,120,.16);
+}
+html,body{margin:0;min-height:100%;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;color:var(--ink);background:linear-gradient(#dff4ff,#f8fcff)}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh}
+.screen{display:none;min-height:100vh;padding:22px}
+.screen.active{display:block}
+.setup-card{
+  width:min(920px,96vw);margin:3vh auto;background:rgba(255,255,255,.95);
+  border:6px solid #fff;border-radius:34px;padding:34px;box-shadow:var(--shadow);text-align:center
+}
+.series-label{margin:0;color:#3d91c9;font-weight:800;letter-spacing:.05em}
+h1{margin:.15em 0;font-size:clamp(34px,5vw,62px)}
+.lead{font-size:clamp(18px,2.3vw,28px)}
+.count-row{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:24px 0}
+.count-btn,.primary-btn{
+  border:0;border-radius:18px;padding:14px 24px;font-weight:800;background:#fff4ce;
+  box-shadow:0 5px 0 #e3c35c;color:#594817
+}
+.count-btn.selected{background:#ffd95a;transform:translateY(2px);box-shadow:0 3px 0 #c8a63d}
+.primary-btn{background:#ffd45c;font-size:24px;min-width:220px}
+.player-inputs{display:grid;gap:12px;margin:24px auto;max-width:720px}
+.player-input-row{
+  display:grid;grid-template-columns:90px 1fr;align-items:center;gap:12px;
+  padding:12px;border-radius:18px;background:#f7fbff
+}
+.player-color{font-weight:900;border-radius:14px;padding:12px;color:#fff;text-shadow:0 1px 2px #555}
+.player-input-row input{width:100%;font-size:22px;border:3px solid #d9e8ef;border-radius:14px;padding:12px 16px}
+
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.topbar h1{font-size:clamp(28px,4vw,50px);margin:0}
+.top-actions{display:flex;gap:10px}
+.icon-btn{width:54px;height:54px;border:0;border-radius:16px;background:#fff;box-shadow:var(--shadow);font-size:28px}
+
+.game-layout{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:18px}
+.board-panel,.side-panel{
+  background:rgba(255,255,255,.9);border:5px solid #fff;border-radius:28px;box-shadow:var(--shadow)
+}
+.board-panel{padding:18px;min-height:75vh;display:flex;flex-direction:column}
+.side-panel{padding:18px}
+.board-title-row{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.turn-badge{padding:10px 16px;border-radius:16px;font-size:24px;font-weight:900;color:#fff}
+.status-text{font-size:22px;font-weight:800}
+.board{
+  flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);
+  gap:10px;padding:18px;margin-top:8px;border-radius:24px;
+  background:linear-gradient(#bfeaff 0 28%,#d8f4bb 28% 100%);position:relative;min-height:480px
+}
+.tile{
+  position:relative;border-radius:18px;border:4px solid rgba(255,255,255,.9);
+  display:flex;align-items:center;justify-content:center;font-size:34px;
+  box-shadow:0 4px 0 rgba(91,112,88,.18);min-height:80px
+}
+.tile.intro{background:#aadaf6}.tile.sst{background:#f7b7c8}.tile.move{background:#bfe39b}.tile.event{background:#ffd67a}
+.tile.start,.tile.goal{background:#fff7d8;font-size:18px;font-weight:900}
+.tile-number{position:absolute;left:8px;top:5px;font-size:13px;font-weight:900;opacity:.65}
+.pawns{position:absolute;inset:7px;display:flex;align-items:flex-end;justify-content:center;gap:3px;flex-wrap:wrap}
+.pawn{
+  width:30px;height:30px;border-radius:50% 50% 46% 46%;border:3px solid white;box-shadow:0 2px 5px #6667;
+  display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900;transition:transform .24s ease
+}
+.pawn.active{transform:scale(1.18) translateY(-5px)}
+
+.dice-btn{
+  align-self:center;margin:14px 0 0;border:0;border-radius:24px;background:#ffc944;
+  padding:14px 34px;min-width:320px;font-size:26px;font-weight:900;color:#654c0b;
+  box-shadow:0 7px 0 #d39a1e;display:flex;justify-content:center;align-items:center;gap:16px
+}
+.dice-btn:disabled{opacity:.55;cursor:default}
+.dice-face{font-size:44px;line-height:1}
+
+.side-panel h2,.side-panel h3{text-align:center}
+.player-list{display:grid;gap:10px}
+.player-row{border-radius:16px;padding:10px;background:#f7f8f5;border:3px solid transparent}
+.player-row.active{border-color:#ffcc4c;background:#fff8dd;transform:scale(1.02)}
+.player-row-top{display:flex;align-items:center;gap:9px;font-weight:900;font-size:19px}
+.dot{width:22px;height:22px;border-radius:50%;border:3px solid #fff;box-shadow:0 1px 4px #7777}
+.player-meta{font-size:14px;margin-top:5px}
+.legend{margin-top:22px;padding-top:12px;border-top:2px dashed #d6d6cc}
+.legend div{display:flex;align-items:center;gap:9px;margin:9px 0;font-weight:800}
+.legend-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center}
+.legend-icon.intro{background:#aadaf6}.legend-icon.sst{background:#f7b7c8}.legend-icon.move{background:#bfe39b}.legend-icon.event{background:#ffd67a}
+
+.overlay{
+  position:fixed;inset:0;background:rgba(43,61,70,.54);display:none;align-items:center;justify-content:center;
+  z-index:20;padding:18px;backdrop-filter:blur(4px)
+}
+.overlay.show{display:flex}
+.shuffle-box,.task-card,.goal-card{
+  width:min(900px,94vw);background:#fffef9;border:7px solid white;border-radius:32px;
+  box-shadow:0 18px 55px rgba(0,0,0,.28);text-align:center
+}
+.shuffle-box{padding:34px}
+.shuffle-title{font-size:clamp(24px,4vw,42px);font-weight:900}
+.shuffle-cards{display:flex;justify-content:center;align-items:center;gap:18px;min-height:260px}
+.shuffle-card{
+  width:130px;height:190px;border-radius:20px;background:linear-gradient(135deg,#5ba7d4,#8bd1ef);
+  border:7px solid #fff;outline:4px solid #4a95c0;display:grid;place-items:center;color:#fff;
+  font-size:70px;font-weight:900;box-shadow:0 10px 20px #6b8a9f55
+}
+.shuffle-card.shuffle-a{animation:shuffleA .36s ease-in-out}
+.shuffle-card.shuffle-b{animation:shuffleB .36s ease-in-out}
+@keyframes shuffleA{50%{transform:translateX(150px) rotate(8deg) scale(1.05)}}
+@keyframes shuffleB{50%{transform:translateX(-150px) rotate(-8deg) scale(1.05)}}
+
+.task-card{position:relative;padding:28px 34px 34px}
+.close-btn{
+  position:absolute;right:18px;top:14px;width:64px;height:64px;border-radius:50%;border:5px solid #fff;
+  background:#ef6f61;color:#fff;font-size:38px;font-weight:900;box-shadow:0 4px 0 #bd4d43
+}
+.task-genre{display:inline-block;padding:9px 22px;border-radius:999px;font-weight:900;font-size:22px;margin-bottom:14px}
+.task-visual{height:260px;display:grid;place-items:center;border-radius:24px;background:#f3f8fb;overflow:hidden}
+.task-visual img{width:100%;height:100%;object-fit:contain}
+.task-emoji{font-size:130px}
+.task-card h2{font-size:clamp(28px,4vw,48px);margin:18px 0 8px}
+.task-card p{font-size:clamp(20px,2.7vw,32px);font-weight:800;margin:8px auto;max-width:760px;line-height:1.5}
+.next-help{opacity:.55;font-size:16px!important;margin-top:16px!important}
+.goal-card{padding:44px}
+.goal-emoji{font-size:110px}
+.goal-card h2{font-size:54px;margin:8px}
+.goal-card p{font-size:28px;font-weight:800}
+
+@media (max-width:900px){
+  .screen{padding:10px}
+  .game-layout{grid-template-columns:1fr}
+  .side-panel{order:-1}
+  .side-panel .legend{display:none}
+  .player-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .board{min-height:440px}
+}
+@media (max-width:600px){
+  .game-layout{display:block}
+  .side-panel{margin-bottom:10px}
+  .board{gap:5px;padding:7px;min-height:370px}
+  .tile{min-height:62px;font-size:25px;border-width:2px;border-radius:12px}
+  .pawn{width:22px;height:22px;font-size:10px}
+  .dice-btn{min-width:0;width:100%;font-size:21px}
+  .shuffle-card{width:70px;height:110px;font-size:42px;border-width:4px}
+  .shuffle-cards{gap:8px;min-height:160px}
+  .task-visual{height:210px}
+}
