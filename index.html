@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#dff4ee">
-<title>みんなでかんがえよう！ SSTすごろく v3.0</title>
+<title>みんなでかんがえよう！ SSTすごろく v3.2</title>
 <style>
 :root{
   --ink:#3e4a47;
@@ -14,7 +14,7 @@
   --shadow:0 10px 28px rgba(49,58,54,.15);
 }
 *{box-sizing:border-box}
-html,body{width:100%;height:100%;margin:0;overflow:hidden;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;color:var(--ink);background:#dfeee8}
+html,body{width:100%;height:100%;margin:0;overflow:hidden;overscroll-behavior:none;touch-action:none;font-family:"Hiragino Maru Gothic ProN","Yu Gothic",system-ui,sans-serif;color:var(--ink);background:#dfeee8}
 button,input{font:inherit}
 button{touch-action:manipulation}
 #app{
@@ -60,13 +60,13 @@ button{touch-action:manipulation}
 .board{
   position:absolute;inset:0;padding:2.1% 2.6%;
   display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr);
-  gap:2.3% 1.45%;align-items:center;justify-items:center
+  gap:2.5% 1.7%;align-items:center;justify-items:center
 }
 .route-line{
   position:absolute;inset:0;width:100%;height:100%;pointer-events:none;opacity:.42
 }
 .space{
-  position:relative;width:min(9vw,15.5vh);aspect-ratio:1.28/1;
+  position:relative;width:min(9.2vw,15.8vh);aspect-ratio:1.38/1;
   border-radius:23%;border:clamp(2px,.23vw,5px) solid var(--line);
   background:var(--cream);box-shadow:0 .45vw 0 rgba(94,77,58,.22),0 .7vw 1.2vw rgba(64,72,68,.14);
   display:flex;align-items:center;justify-content:center;z-index:2;
@@ -80,10 +80,10 @@ button{touch-action:manipulation}
 .space.start .label,.space.goal .label{
   font-weight:900;font-size:clamp(12px,1.25vw,23px);text-align:center;line-height:1.1
 }
-.space.intro{background:#fff0cf}
-.space.event{background:#fff4bb}
-.space.sst{background:#dff3ff}
-.space.challenge{background:#f0e3ff}
+.space.intro{background:#ffe7a3}
+.space.event{background:#ffc4d6}
+.space.sst{background:#bfe8ff}
+.space.challenge{background:#ccefc5}
 .tokens{position:absolute;inset:0;z-index:4;pointer-events:none}
 .token{
   --x:50%;--y:50%;
@@ -161,12 +161,23 @@ button{touch-action:manipulation}
 @keyframes roll{0%{transform:rotate(-5deg) scale(.98)}50%{transform:rotate(5deg) scale(1.03)}100%{transform:rotate(-5deg) scale(.98)}}
 .tap-note{margin-top:1.4em!important;font-weight:900;color:#6f5da6}
 .confirm-die{transform:scale(.72);margin:-2vw 0}
-.shuffle-stage{display:flex;align-items:center;justify-content:center;height:260px;width:100%;position:relative}
+.shuffle-stage{display:flex;align-items:center;justify-content:center;height:270px;width:100%;position:relative}
 .shuffle-card{
+  --card-color:#bfe8ff;
   position:absolute;width:clamp(150px,16vw,250px);aspect-ratio:.72;border-radius:1.5vw;
-  border:4px solid white;box-shadow:0 12px 25px rgba(42,48,46,.22);
-  display:flex;align-items:center;justify-content:center;font-size:clamp(45px,5.5vw,94px);
-  background:#efe8ff
+  border:clamp(5px,.45vw,8px) solid #fff;box-shadow:0 12px 25px rgba(42,48,46,.22);
+  background:
+    repeating-linear-gradient(45deg,rgba(255,255,255,.22) 0 8px,transparent 8px 16px),
+    repeating-linear-gradient(-45deg,rgba(255,255,255,.12) 0 8px,transparent 8px 16px),
+    var(--card-color);
+}
+.shuffle-card::before{
+  content:"";position:absolute;inset:8%;border:3px solid rgba(255,255,255,.9);border-radius:1vw;
+  box-shadow:inset 0 0 0 3px rgba(73,72,66,.12)
+}
+.shuffle-card::after{
+  content:"✦";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:rgba(255,255,255,.94);font-size:clamp(46px,5.2vw,88px);text-shadow:0 3px 0 rgba(73,72,66,.16)
 }
 .shuffle-card:nth-child(1){animation:shuffle1 .72s ease-in-out infinite}
 .shuffle-card:nth-child(2){animation:shuffle2 .72s ease-in-out infinite}
@@ -283,9 +294,9 @@ button{touch-action:manipulation}
     <div class="modal">
       <h2>お題をえらんでいます</h2>
       <div class="shuffle-stage">
-        <div class="shuffle-card">👤</div>
-        <div class="shuffle-card">⭐</div>
-        <div class="shuffle-card">💬</div>
+        <div class="shuffle-card"></div>
+        <div class="shuffle-card"></div>
+        <div class="shuffle-card"></div>
       </div>
     </div>
   </div>
@@ -318,69 +329,48 @@ button{touch-action:manipulation}
 (() => {
   "use strict";
 
-  // 仮のお題35個。以前決めた正式版がある場合は、ここだけ差し替えれば使えます。
   const QUESTIONS = {
     intro: [
-      "好きな食べものを教えてください。",
-      "好きな遊びを教えてください。",
-      "好きな動物を教えてください。",
-      "好きな色を教えてください。",
-      "得意なことを一つ教えてください。",
-      "今日楽しみにしていることを教えてください。",
-      "行ってみたい場所を教えてください。",
-      "大きくなったらやってみたいことを教えてください。"
-    ],
-    event: [
-      "みんなで一回、拍手をしよう。",
-      "右どなりの人に『こんにちは』と言おう。",
-      "みんなで同じポーズをしよう。",
-      "先生の動きを一つまねしよう。",
-      "みんなでゆっくり深呼吸しよう。",
-      "一人選んで、よいところを伝えよう。",
-      "みんなで『がんばろう！』と言おう。",
-      "好きな人とハイタッチをしよう。",
-      "みんなで静かに三つ数えよう。"
-    ],
-    sst: [
-      "お友達が使っているおもちゃを使いたいとき、何と言う？",
-      "お友達にぶつかってしまったとき、どうする？",
-      "順番を待っているとき、どんなふうに待つ？",
-      "困っているお友達がいたら、どうする？",
-      "負けて悔しいとき、どうしたらよい？",
-      "嫌なことをされたとき、どんな言葉で伝える？",
-      "お友達と同じものを使いたいとき、どうする？",
-      "先生の話を聞くとき、身体をどうする？",
-      "お友達が話しているとき、どうする？",
-      "遊びに入りたいとき、何と言う？"
+      'すきなたべものは？','すきなのみものは？','すきなくだものは？','すきなおやつは？','すきなどうぶつは？',
+      'すきなのりものは？','すきないろは？','おなまえを おしえてね','なんさいかな？','すきなえほんは？'
     ],
     challenge: [
-      "先生の言った言葉を、同じ声の大きさで言ってみよう。",
-      "嬉しい顔をしてみよう。",
-      "悲しい顔をしてみよう。",
-      "怒っているときの気持ちを言葉で伝えてみよう。",
-      "『貸して』を優しい声で言ってみよう。",
-      "『ありがとう』を相手の顔を見て言ってみよう。",
-      "『一緒に遊ぼう』と言ってみよう。",
-      "小さな声・普通の声・大きな声を使い分けてみよう。"
+      '10まで かぞえよう','5まで うしろから かぞえよう','あいうえおを いってみよう','Good morning! と いってみよう',
+      'ジャンプ 5かい','かたあしだち 5びょう','つまさきで たってみよう','ぐるっと 1かい まわろう',
+      'いぬの まねを してみよう','ねこの まねを してみよう'
+    ],
+    sst: [
+      'おもちゃを かりたい。なんて いう？','いっしょに あそびたい。なんて いう？','おともだちと ぶつかった。なんて いう？',
+      'おかたづけの じかん。どうする？','おもちゃを こわしちゃった。どうする？','ごはんを たべるときの あいさつは？',
+      'ごはんを たべおわったときの あいさつは？','おともだちが おもちゃを かしてくれた。なんて いう？',
+      'あさ おきたときの あいさつは？','となりの おともだちの なまえを よんでみよう'
+    ],
+    event: [
+      { text:'1かい おやすみ', effect:'skip', hint:'つぎの じゅんばんは おやすみです' },
+      { text:'2ます もどる', effect:'back2', hint:'こまを 2ます もどします' },
+      { text:'1ます すすめる', effect:'forward1', hint:'こまを 1ます すすめます' },
+      { text:'もういちど サイコロを ふろう', effect:'again', hint:'おだいの あとに もういちど ふれます' },
+      { text:'みんなで はくしゅ', effect:'clap', hint:'みんなで パチパチ！' },
+      { text:'なにがでるかな？', effect:'randomQuestion', hint:'ほかの おだいカードを 1まい えらびます' }
     ]
   };
 
   const CATEGORY = {
-    start:{icon:"🚩",label:"スタート"},
-    intro:{icon:"👤",label:"自己紹介"},
-    event:{icon:"⭐",label:"イベント"},
-    sst:{icon:"💬",label:"SST"},
-    challenge:{icon:"🎵",label:"チャレンジ"},
-    goal:{icon:"🏁",label:"ゴール"}
+    start:{icon:"🚩",label:"スタート",color:"#fff7cf"},
+    intro:{icon:"👤",label:"自己紹介",color:"#ffe7a3"},
+    event:{icon:"⭐",label:"イベント",color:"#ffc4d6"},
+    sst:{icon:"💬",label:"SST",color:"#bfe8ff"},
+    challenge:{icon:"🎵",label:"チャレンジ",color:"#ccefc5"},
+    goal:{icon:"🏁",label:"ゴール",color:"#fff7cf"}
   };
 
-  // スタート・ゴールを含む22マス。中間20マスのジャンルは固定。
+  // 5×4の課題マスを蛇行し、その前後にスタート・ゴールを置く。
   const SPACE_TYPES = [
     "start",
-    "intro","sst","event","challenge","sst",
-    "intro","event","sst","challenge","sst",
-    "intro","sst","event","challenge","sst",
-    "event","intro","sst","challenge","sst",
+    "intro","sst","challenge","event","intro",
+    "sst","challenge","event","intro","sst",
+    "challenge","event","intro","sst","challenge",
+    "event","intro","sst","challenge","event",
     "goal"
   ];
 
@@ -406,6 +396,7 @@ button{touch-action:manipulation}
     confirmDie: document.getElementById("confirmDie"),
     confirmName: document.getElementById("confirmName"),
     shuffleOverlay: document.getElementById("shuffleOverlay"),
+    shuffleCards: [...document.querySelectorAll(".shuffle-card")],
     promptOverlay: document.getElementById("promptOverlay"),
     promptBadge: document.getElementById("promptBadge"),
     promptText: document.getElementById("promptText"),
@@ -426,6 +417,8 @@ button{touch-action:manipulation}
   let soundOn = true;
   let audioCtx = null;
   let lastQuestion = {};
+  let pendingEvent = null;
+  let extraTurn = false;
 
   function makeBoard(){
     els.board.innerHTML = "";
@@ -448,13 +441,13 @@ button{touch-action:manipulation}
     requestAnimationFrame(drawRoute);
   }
 
-  // 6・5・6・5の蛇行で22マス
+  // 各段5枚の課題カード。スタートは左上、ゴールは左下に配置。
   function gridPosition(index){
     const rows = [
       [0,1,2,3,4,5],
-      [11,10,9,8,7,6],
-      [12,13,14,15,16,17],
-      [21,20,19,18]
+      [10,9,8,7,6],
+      [11,12,13,14,15],
+      [21,20,19,18,17,16]
     ];
     for(let r=0;r<rows.length;r++){
       const c = rows[r].indexOf(index);
@@ -505,7 +498,7 @@ button{touch-action:manipulation}
   function beginGame(){
     const names = [...els.nameInputs.querySelectorAll("input")]
       .map((i,n)=>i.value.trim() || `プレイヤー${n+1}`);
-    players = names.map((name,i)=>({name,pos:0,finished:false,color:COLORS[i],symbol:SYMBOLS[i]}));
+    players = names.map((name,i)=>({name,pos:0,finished:false,skip:false,color:COLORS[i],symbol:SYMBOLS[i]}));
     current = 0;
     lastQuestion = {};
     els.tokens.innerHTML = "";
@@ -625,17 +618,50 @@ button{touch-action:manipulation}
     await showShuffleAndPrompt(SPACE_TYPES[p.pos]);
   }
 
-  async function showShuffleAndPrompt(type){
+  async function showShuffle(type, mixed=false){
     state = "shuffle";
+    els.shuffleCards.forEach((card,i)=>{
+      const cardType = mixed ? ["intro","sst","challenge"][i%3] : type;
+      card.style.setProperty("--card-color",CATEGORY[cardType].color);
+    });
     els.shuffleOverlay.classList.add("show");
     for(let i=0;i<10;i++){ tone(260+(i%4)*45,.035); await sleep(500); }
     els.shuffleOverlay.classList.remove("show");
+  }
 
-    const q = chooseQuestion(type);
+  async function showShuffleAndPrompt(type){
+    await showShuffle(type,false);
+
+    if(type === "event"){
+      const event = chooseQuestion("event");
+      if(event.effect === "randomQuestion"){
+        els.promptBadge.textContent = `${CATEGORY.event.icon} ${CATEGORY.event.label}`;
+        els.promptBadge.style.background = CATEGORY.event.color;
+        els.promptText.textContent = event.text;
+        els.promptOverlay.classList.add("show");
+        tone(620,.12);
+        await sleep(1200);
+        els.promptOverlay.classList.remove("show");
+        await showShuffle("event",true);
+        const randomType = ["intro","sst","challenge"][Math.floor(Math.random()*3)];
+        const q = chooseQuestion(randomType);
+        pendingEvent = null;
+        showPrompt(randomType,q);
+        return;
+      }
+      pendingEvent = event;
+      showPrompt("event",event.text);
+      return;
+    }
+
+    pendingEvent = null;
+    showPrompt(type,chooseQuestion(type));
+  }
+
+  function showPrompt(type,text){
     els.promptBadge.textContent = `${CATEGORY[type].icon} ${CATEGORY[type].label}`;
-    els.promptBadge.style.background =
-      type==="intro"?"#fff0cf":type==="event"?"#fff4bb":type==="sst"?"#dff3ff":"#f0e3ff";
-    els.promptText.textContent = q;
+    els.promptBadge.style.background = CATEGORY[type].color;
+    els.promptText.textContent = text;
     els.promptOverlay.classList.add("show");
     state = "prompt";
     tone(620,.12);
@@ -649,9 +675,36 @@ button{touch-action:manipulation}
     return list[idx];
   }
 
+  async function applyEventEffect(event){
+    if(!event) return;
+    const p = players[current];
+    if(event.effect === "skip") p.skip = true;
+    if(event.effect === "again") extraTurn = true;
+    if(event.effect === "back2"){
+      const target = Math.max(0,p.pos-2);
+      while(p.pos > target){ p.pos--; updateAllTokens(true); tone(330,.07); await sleep(500); }
+    }
+    if(event.effect === "forward1"){
+      const target = Math.min(SPACE_TYPES.length-1,p.pos+1);
+      while(p.pos < target){ p.pos++; updateAllTokens(true); tone(430,.07); await sleep(500); }
+      if(p.pos === SPACE_TYPES.length-1) p.finished = true;
+    }
+    renderPlayers();
+  }
+
   async function closePrompt(){
     if(state !== "prompt") return;
     els.promptOverlay.classList.remove("show");
+    state = "transition";
+    const event = pendingEvent;
+    pendingEvent = null;
+    await applyEventEffect(event);
+    if(players[current].finished){
+      els.goalName.textContent = `${players[current].name}さん`;
+      els.goalOverlay.classList.add("show");
+      await sleep(2200);
+      els.goalOverlay.classList.remove("show");
+    }
     await advanceTurn();
   }
 
@@ -666,9 +719,32 @@ button{touch-action:manipulation}
       setHint("おつかれさまでした！");
       return;
     }
+
+    if(extraTurn && !players[current].finished){
+      extraTurn = false;
+      els.nextName.textContent = `${players[current].name}さん もういちど！`;
+      els.nextOverlay.classList.add("show");
+      await sleep(2500);
+      els.nextOverlay.classList.remove("show");
+      state = "ready";
+      setHint("画面をタップしてサイコロを振ろう");
+      return;
+    }
+
     do{
       current = (current + 1) % players.length;
-    }while(players[current].finished);
+      if(players[current].skip && !players[current].finished){
+        players[current].skip = false;
+        renderPlayers();
+        els.nextName.textContent = `${players[current].name}さんは おやすみ`;
+        els.nextOverlay.classList.add("show");
+        await sleep(2200);
+        els.nextOverlay.classList.remove("show");
+      } else if(!players[current].finished){
+        break;
+      }
+    }while(true);
+
     renderPlayers();
     els.nextName.textContent = `${players[current].name}さん`;
     els.nextOverlay.classList.add("show");
@@ -729,11 +805,35 @@ button{touch-action:manipulation}
     }
   });
 
-  document.addEventListener("click",e=>{
-    if(e.target.closest("button,input,select,label")) return;
+  let pointerStart = null;
+
+  function runPrimaryAction(target){
+    if(target && target.closest("button,input,select,label")) return;
     if(state==="ready") rollDice();
     else if(state==="confirm") moveCurrent();
-  });
+  }
+
+  document.addEventListener("pointerdown",e=>{
+    if(e.target.closest("button,input,select,label")) return;
+    pointerStart = {x:e.clientX,y:e.clientY,time:Date.now(),target:e.target};
+  },{passive:true});
+
+  document.addEventListener("pointerup",e=>{
+    if(!pointerStart) return;
+    const dx = e.clientX - pointerStart.x;
+    const dy = e.clientY - pointerStart.y;
+    const distance = Math.hypot(dx,dy);
+    const elapsed = Date.now() - pointerStart.time;
+
+    // タップでもスワイプでも、その時点の「次へ」操作として扱う。
+    // 長押しだけは誤操作防止のため反応させない。
+    if(elapsed < 1200 && (distance < 35 || distance >= 35)){
+      runPrimaryAction(pointerStart.target);
+    }
+    pointerStart = null;
+  },{passive:true});
+
+  document.addEventListener("pointercancel",()=>{ pointerStart = null; },{passive:true});
 
   window.addEventListener("resize",()=>requestAnimationFrame(drawRoute));
   makeBoard();
