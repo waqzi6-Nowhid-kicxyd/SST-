@@ -32,7 +32,9 @@
     intro: "icon_intro.png",
     sst: "icon_sst.png",
     challenge: "icon_challenge.png",
-    event: "icon_event.png"
+    event: "icon_event.png",
+    start: "icon_start.png",
+    goal: "icon_goal.png"
   };
 
   const CATEGORY = {
@@ -108,7 +110,7 @@
       s.style.setProperty("--tilt", `${[-2,1,-1,2,0][index%5]}deg`);
       const info = CATEGORY[type];
       if(type === "start" || type === "goal"){
-        s.innerHTML = `<div class="label">${info.icon}<br>${info.label}</div>`;
+        s.innerHTML = `<img class="endpoint-icon" src="${ICON_IMAGES[type]}" alt="${info.label}">`;
       } else {
         s.innerHTML = `<div class="icon" aria-label="${info.label}">
           <img class="category-icon-img" src="${ICON_IMAGES[type]}" alt="">
@@ -145,16 +147,51 @@
     });
   }
 
+  function routePath(pts){
+    if(!pts.length) return "";
+    const parts = [`M ${pts[0].x} ${pts[0].y}`];
+
+    for(let i=1;i<pts.length;i++){
+      const a = pts[i-1];
+      const b = pts[i];
+
+      // Start込み6→7マス目：右側へふくらむ緩やかなカーブ
+      if(i === 6){
+        const bulge = Math.max(34, els.boardWrap.clientWidth * .045);
+        parts.push(
+          `C ${a.x + bulge} ${a.y + (b.y-a.y)*.22}, ` +
+          `${b.x + bulge} ${a.y + (b.y-a.y)*.78}, ${b.x} ${b.y}`
+        );
+        continue;
+      }
+
+      // 16→17マス目：斜め直線ではなく、外側へ回り込むカーブ
+      if(i === 16){
+        const bulgeX = Math.max(36, els.boardWrap.clientWidth * .05);
+        const midY = a.y + (b.y-a.y)*.52;
+        parts.push(
+          `C ${a.x + bulgeX} ${a.y + (b.y-a.y)*.12}, ` +
+          `${b.x + bulgeX} ${midY}, ${b.x} ${b.y}`
+        );
+        continue;
+      }
+
+      parts.push(`L ${b.x} ${b.y}`);
+    }
+    return parts.join(" ");
+  }
+
   function drawRoute(){
     const pts = centers();
     const w = els.boardWrap.clientWidth;
     const h = els.boardWrap.clientHeight;
+    const d = routePath(pts);
     els.routeLine.setAttribute("viewBox",`0 0 ${w} ${h}`);
     els.routeLine.innerHTML = `
-      <polyline points="${pts.map(p=>`${p.x},${p.y}`).join(" ")}"
+      <path d="${d}"
         fill="none" stroke="#a4815d" stroke-width="${Math.max(22,w*.034)}"
         stroke-linecap="round" stroke-linejoin="round" opacity=".42"/>
-      <polyline points="${pts.map(p=>`${p.x},${p.y}`).join(" ")}"
+      <path d="${d}"
         fill="none" stroke="#f4d7a7" stroke-width="${Math.max(12,w*.021)}"
         stroke-linecap="round" stroke-linejoin="round" opacity=".76"/>
     `;
