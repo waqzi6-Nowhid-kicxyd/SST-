@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#dff3e5">
-  <title>みんなですごろく V2.0</title>
-  <link rel="stylesheet" href="styles.css?v=2.0.0">
+  <title>みんなですごろく V2.1</title>
+  <link rel="stylesheet" href="styles.css?v=2.1.0">
 </head>
 <body>
 <div class="app">
@@ -23,11 +23,10 @@
   <main class="game-layout">
     <section class="board-panel" aria-label="すごろく盤面">
       <div class="board-head">
-        <div class="start-label">スタート</div>
         <div id="turnLabel" class="turn-label">あかさんの ばん</div>
         <div class="goal-label">ゴールまで <strong id="remainingLabel">20</strong> マス</div>
       </div>
-      <div id="board" class="board"></div>
+      <div id="board" class="board" aria-label="公園のすごろく盤面"></div>
     </section>
 
     <aside class="side-panel">
@@ -57,7 +56,15 @@
 </div>
 
 <div id="questionScreen" class="overlay" aria-hidden="true">
-  <article class="question-card">
+  <div id="shuffleStage" class="shuffle-stage" aria-live="polite">
+    <p>カードを まぜています</p>
+    <div class="shuffle-deck" aria-hidden="true">
+      <span class="shuffle-card card-back-one">★</span>
+      <span class="shuffle-card card-back-two">★</span>
+      <span class="shuffle-card card-back-three">★</span>
+    </div>
+  </div>
+  <article id="questionCard" class="question-card" hidden>
     <div id="questionCategory" class="question-category"></div>
     <div id="questionIcon" class="question-icon"></div>
     <p id="questionText" class="question-text"></p>
@@ -83,7 +90,7 @@
   </section>
 </div>
 
-<script src="questions.js?v=2.0.0"></script>
-<script src="script.js?v=2.0.0"></script>
+<script src="questions.js?v=2.1.0"></script>
+<script src="script.js?v=2.1.0"></script>
 </body>
 </html>
