@@ -1,11 +1,30 @@
 /*
-  問題を追加する場所です。
+  ============================================================
+  SSTすごろく 問題ファイル
+  ============================================================
 
-  画像を使う場合：
-  1. assets/tasks フォルダに画像を入れる
-  2. image: "assets/tasks/ファイル名.png" を指定する
+  問題の変更・追加は、この questions.js だけを編集します。
+  app.js や index.html を変更する必要はありません。
 
-  image を空文字にすると emoji が表示されます。
+  【追加例】
+  { title: "すきな くだものは？", text: "ひとつ教えてね。", emoji: "🍎" },
+
+  【画像を使う場合だけ】
+  image: "assets/tasks/画像名.png" を追加できます。
+  画像を使わない問題は、emoji だけで動作します。
+
+  分類：
+  intro = 自己紹介
+  sst   = SST問題
+  move  = 運動
+  event = イベント
+
+  event の効果：
+  effect: "skip"     1回休み
+  effect: "back2"    2マス戻る
+  effect: "forward1" 1マス進む
+  effect: "again"    もう一度振る
+  effect: "none"     移動効果なし
 */
 window.SST_TASKS = {
   intro: [

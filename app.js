@@ -41,7 +41,7 @@ const diceCube = document.getElementById("diceCube");
 const diceLabel = document.getElementById("diceLabel");
 const diceResultOverlay = document.getElementById("diceResultOverlay");
 const diceResultCube = document.getElementById("diceResultCube");
-const diceResultNumber = document.getElementById("diceResultNumber");
+const diceQuestion = document.getElementById("diceQuestion");
 const moveBtn = document.getElementById("moveBtn");
 const shuffleOverlay = document.getElementById("shuffleOverlay");
 const shuffleTitle = document.getElementById("shuffleTitle");
@@ -169,27 +169,33 @@ async function rollDice(){
   statusText.textContent = "サイコロを ふっているよ…";
   diceLabel.textContent = "ころころ…";
 
-  diceCube.classList.remove("show-1","show-2","show-3","show-4","show-5","show-6");
-  diceCube.classList.remove("rolling");
-  void diceCube.offsetWidth;
-  diceCube.classList.add("rolling");
-
   const roll = Math.floor(Math.random()*6)+1;
   state.pendingRoll = roll;
 
-  await sleep(1350);
+  diceQuestion.textContent = "サイコロを ふっているよ…";
+  moveBtn.hidden = true;
 
-  diceCube.classList.remove("rolling");
-  diceCube.classList.add(`show-${roll}`);
-  diceLabel.textContent = `${roll}！`;
-  statusText.textContent = "いくつ出たか かんがえてみよう";
-
-  diceResultCube.classList.remove("show-1","show-2","show-3","show-4","show-5","show-6");
-  diceResultCube.classList.add(`show-${roll}`);
-  diceResultNumber.textContent = roll;
+  diceResultCube.classList.remove(
+    "show-1","show-2","show-3","show-4","show-5","show-6","rolling"
+  );
+  void diceResultCube.offsetWidth;
+  diceResultCube.classList.add("rolling");
 
   diceResultOverlay.classList.add("show");
   diceResultOverlay.setAttribute("aria-hidden","false");
+
+  await sleep(1650);
+
+  diceResultCube.classList.remove("rolling");
+  diceResultCube.classList.add(`show-${roll}`);
+
+  diceCube.classList.remove("show-1","show-2","show-3","show-4","show-5","show-6");
+  diceCube.classList.add(`show-${roll}`);
+
+  diceLabel.textContent = "でたよ！";
+  statusText.textContent = "いくつ すすめるかな？";
+  diceQuestion.textContent = "いくつ すすめるかな？";
+  moveBtn.hidden = false;
 }
 async function confirmMove(){
   if(!state.pendingRoll) return;
@@ -197,6 +203,7 @@ async function confirmMove(){
   const roll = state.pendingRoll;
   state.pendingRoll = null;
   moveBtn.disabled = true;
+  moveBtn.hidden = true;
   diceResultOverlay.classList.remove("show");
   diceResultOverlay.setAttribute("aria-hidden","true");
 
