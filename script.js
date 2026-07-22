@@ -29,7 +29,6 @@ const turnScreen=document.getElementById('turnScreen');
 const turnAnnouncement=document.getElementById('turnAnnouncement');
 const gameLayout=document.querySelector('.game-layout');
 const rollBtn=document.getElementById('rollBtn');
-const nextTurnBtn=document.getElementById('nextTurnBtn');
 
 function normalizeName(value){
   return value.replace(/[ァ-ヶ]/g,ch=>String.fromCharCode(ch.charCodeAt(0)-0x60)).replace(/[^ぁ-ゖー]/g,'').slice(0,8);
@@ -43,7 +42,7 @@ function newPlayers(count=3,names=[]){
   players=Array.from({length:count},(_,i)=>({name:names[i]||DEFAULT_NAMES[i],color:COLORS[i],pos:0,skip:false}));
   current=0;
   renderAll();
-  setTurnControls(true,false);
+  setTurnControls(true);
 }
 
 function renderBoard(){
@@ -120,9 +119,8 @@ function renderAll(){
   renderPlayers();
 }
 
-function setTurnControls(canRoll,canNext){
+function setTurnControls(canRoll){
   rollBtn.disabled=!canRoll;
-  nextTurnBtn.disabled=!canNext;
   gameLayout.classList.toggle('roll-ready',canRoll);
 }
 
@@ -143,7 +141,7 @@ function face(n){
 function rollDice(){
   if(isMoving)return;
   const p=players[current];
-  setTurnControls(false,false);
+  setTurnControls(false);
 
   if(p.skip){
     p.skip=false;
@@ -174,7 +172,7 @@ function rollDice(){
 
 async function animateTo(player,target){
   isMoving=true;
-  setTurnControls(false,false);
+  setTurnControls(false);
 
   while(player.pos<target){
     player.pos++;
@@ -241,7 +239,7 @@ async function finishQuestion(){
   hideOverlay(questionScreen);
   pendingEvent=null;
   questionOpen=false;
-  setTurnControls(false,false);
+  setTurnControls(false);
 
   if(event==='back2'){
     await animateTo(p,Math.max(0,p.pos-2));
@@ -254,7 +252,7 @@ async function finishQuestion(){
   renderAll();
 
   if(event==='again'){
-    setTurnControls(true,false);
+    setTurnControls(true);
     return;
   }
 
@@ -271,7 +269,7 @@ async function showTurnAnnouncement(){
 
 async function nextTurn(showAnnouncement=false){
   if(isMoving||players.every(p=>p.pos>=20))return;
-  setTurnControls(false,false);
+  setTurnControls(false);
 
   do{
     current=(current+1)%players.length;
@@ -283,7 +281,7 @@ async function nextTurn(showAnnouncement=false){
     await showTurnAnnouncement();
   }
 
-  setTurnControls(true,false);
+  setTurnControls(true);
 }
 
 function buildNameInputs(){
@@ -307,7 +305,6 @@ function buildNameInputs(){
 rollBtn.addEventListener('click',rollDice);
 document.getElementById('moveBtn').addEventListener('click',moveCurrent);
 document.getElementById('questionCloseBtn').addEventListener('click',finishQuestion);
-nextTurnBtn.addEventListener('click',()=>nextTurn(true));
 
 gameLayout.addEventListener('click',event=>{
   if(rollBtn.disabled||isMoving||questionOpen)return;
