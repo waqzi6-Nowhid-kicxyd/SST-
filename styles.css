@@ -145,3 +145,131 @@ h1{margin:.15em 0;font-size:clamp(34px,5vw,62px)}
   .shuffle-cards{gap:8px;min-height:160px}
   .task-visual{height:210px}
 }
+
+
+/* V1.2 3Dサイコロ */
+.dice-stage{
+  width:72px;
+  height:72px;
+  display:inline-grid;
+  place-items:center;
+  perspective:500px;
+}
+.dice-cube{
+  --dice-size:58px;
+  width:var(--dice-size);
+  height:var(--dice-size);
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform .85s cubic-bezier(.2,.75,.25,1);
+}
+.dice-side{
+  position:absolute;
+  inset:0;
+  border-radius:12px;
+  background:#fffdf8;
+  border:3px solid #d5c9ac;
+  box-shadow:inset 0 0 0 2px #fff, 0 4px 8px rgba(62,48,18,.18);
+  backface-visibility:hidden;
+}
+.dice-side::before{
+  content:"";
+  position:absolute;
+  inset:8px;
+  background-repeat:no-repeat;
+}
+.dice-side[data-face="1"]::before{
+  background:radial-gradient(circle at 50% 50%, #51483f 0 12%, transparent 13%);
+}
+.dice-side[data-face="2"]::before{
+  background:
+    radial-gradient(circle at 28% 28%, #51483f 0 11%, transparent 12%),
+    radial-gradient(circle at 72% 72%, #51483f 0 11%, transparent 12%);
+}
+.dice-side[data-face="3"]::before{
+  background:
+    radial-gradient(circle at 25% 25%, #51483f 0 10%, transparent 11%),
+    radial-gradient(circle at 50% 50%, #51483f 0 10%, transparent 11%),
+    radial-gradient(circle at 75% 75%, #51483f 0 10%, transparent 11%);
+}
+.dice-side[data-face="4"]::before{
+  background:
+    radial-gradient(circle at 27% 27%, #51483f 0 10%, transparent 11%),
+    radial-gradient(circle at 73% 27%, #51483f 0 10%, transparent 11%),
+    radial-gradient(circle at 27% 73%, #51483f 0 10%, transparent 11%),
+    radial-gradient(circle at 73% 73%, #51483f 0 10%, transparent 11%);
+}
+.dice-side[data-face="5"]::before{
+  background:
+    radial-gradient(circle at 25% 25%, #51483f 0 9%, transparent 10%),
+    radial-gradient(circle at 75% 25%, #51483f 0 9%, transparent 10%),
+    radial-gradient(circle at 50% 50%, #51483f 0 9%, transparent 10%),
+    radial-gradient(circle at 25% 75%, #51483f 0 9%, transparent 10%),
+    radial-gradient(circle at 75% 75%, #51483f 0 9%, transparent 10%);
+}
+.dice-side[data-face="6"]::before{
+  background:
+    radial-gradient(circle at 27% 20%, #51483f 0 8%, transparent 9%),
+    radial-gradient(circle at 73% 20%, #51483f 0 8%, transparent 9%),
+    radial-gradient(circle at 27% 50%, #51483f 0 8%, transparent 9%),
+    radial-gradient(circle at 73% 50%, #51483f 0 8%, transparent 9%),
+    radial-gradient(circle at 27% 80%, #51483f 0 8%, transparent 9%),
+    radial-gradient(circle at 73% 80%, #51483f 0 8%, transparent 9%);
+}
+
+.dice-front{transform:rotateY(0deg) translateZ(calc(var(--dice-size)/2))}
+.dice-back{transform:rotateY(180deg) translateZ(calc(var(--dice-size)/2))}
+.dice-right{transform:rotateY(90deg) translateZ(calc(var(--dice-size)/2))}
+.dice-left{transform:rotateY(-90deg) translateZ(calc(var(--dice-size)/2))}
+.dice-top{transform:rotateX(90deg) translateZ(calc(var(--dice-size)/2))}
+.dice-bottom{transform:rotateX(-90deg) translateZ(calc(var(--dice-size)/2))}
+
+.dice-cube.show-1{transform:rotateX(0deg) rotateY(0deg)}
+.dice-cube.show-2{transform:rotateX(-90deg) rotateY(0deg)}
+.dice-cube.show-3{transform:rotateX(0deg) rotateY(-90deg)}
+.dice-cube.show-4{transform:rotateX(0deg) rotateY(90deg)}
+.dice-cube.show-5{transform:rotateX(90deg) rotateY(0deg)}
+.dice-cube.show-6{transform:rotateX(0deg) rotateY(180deg)}
+
+.dice-cube.rolling{
+  animation:diceRoll3d 1.35s cubic-bezier(.22,.72,.3,1);
+}
+@keyframes diceRoll3d{
+  0%{transform:rotateX(0deg) rotateY(0deg) rotateZ(0deg)}
+  30%{transform:rotateX(310deg) rotateY(220deg) rotateZ(95deg) scale(1.08)}
+  60%{transform:rotateX(650deg) rotateY(540deg) rotateZ(220deg) scale(.96)}
+  100%{transform:rotateX(980deg) rotateY(900deg) rotateZ(360deg)}
+}
+
+.dice-result-card{
+  width:min(620px,92vw);
+  background:#fffef9;
+  border:7px solid #fff;
+  border-radius:32px;
+  padding:32px;
+  text-align:center;
+  box-shadow:0 18px 55px rgba(0,0,0,.28);
+}
+.dice-result-lead{
+  margin:0 0 18px;
+  font-size:clamp(28px,4vw,46px);
+  font-weight:900;
+}
+.dice-result-stage{
+  width:180px;
+  height:180px;
+  margin:0 auto;
+  display:grid;
+  place-items:center;
+  perspective:900px;
+}
+.result-cube{
+  --dice-size:120px;
+}
+.dice-result-number{
+  font-size:clamp(76px,12vw,140px);
+  line-height:1;
+  font-weight:900;
+  margin:18px 0 24px;
+  color:#5b4a26;
+}

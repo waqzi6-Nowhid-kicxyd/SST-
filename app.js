@@ -25,7 +25,8 @@ let state = {
   busy: false,
   pendingTask: null,
   extraTurn: false,
-  gameEnded: false
+  gameEnded: false,
+  pendingRoll: null
 };
 
 const setupScreen = document.getElementById("setupScreen");
@@ -36,8 +37,12 @@ const playerList = document.getElementById("playerList");
 const turnBadge = document.getElementById("turnBadge");
 const statusText = document.getElementById("statusText");
 const diceBtn = document.getElementById("diceBtn");
-const diceFace = document.getElementById("diceFace");
+const diceCube = document.getElementById("diceCube");
 const diceLabel = document.getElementById("diceLabel");
+const diceResultOverlay = document.getElementById("diceResultOverlay");
+const diceResultCube = document.getElementById("diceResultCube");
+const diceResultNumber = document.getElementById("diceResultNumber");
+const moveBtn = document.getElementById("moveBtn");
 const shuffleOverlay = document.getElementById("shuffleOverlay");
 const shuffleTitle = document.getElementById("shuffleTitle");
 const shuffleCards = [...document.querySelectorAll(".shuffle-card")];
@@ -87,6 +92,7 @@ document.getElementById("startBtn").addEventListener("click",()=>{
   }));
   state.current = 0;
   state.gameEnded = false;
+  state.pendingRoll = null;
   setupScreen.classList.remove("active");
   gameScreen.classList.add("active");
   renderAll();
@@ -161,19 +167,40 @@ async function rollDice(){
   state.busy = true;
   diceBtn.disabled = true;
   statusText.textContent = "サイコロを ふっているよ…";
+  diceLabel.textContent = "ころころ…";
 
-  const faces = ["⚀","⚁","⚂","⚃","⚄","⚅"];
-  for(let i=0;i<10;i++){
-    diceFace.textContent = faces[Math.floor(Math.random()*6)];
-    await sleep(80 + i*10);
-  }
+  diceCube.classList.remove("show-1","show-2","show-3","show-4","show-5","show-6");
+  diceCube.classList.remove("rolling");
+  void diceCube.offsetWidth;
+  diceCube.classList.add("rolling");
 
   const roll = Math.floor(Math.random()*6)+1;
-  diceFace.textContent = faces[roll-1];
-  diceLabel.textContent = `${roll}！`;
-  statusText.textContent = `${roll}マス すすむよ`;
+  state.pendingRoll = roll;
 
-  await sleep(500);
+  await sleep(1350);
+
+  diceCube.classList.remove("rolling");
+  diceCube.classList.add(`show-${roll}`);
+  diceLabel.textContent = `${roll}！`;
+  statusText.textContent = "いくつ出たか かんがえてみよう";
+
+  diceResultCube.classList.remove("show-1","show-2","show-3","show-4","show-5","show-6");
+  diceResultCube.classList.add(`show-${roll}`);
+  diceResultNumber.textContent = roll;
+
+  diceResultOverlay.classList.add("show");
+  diceResultOverlay.setAttribute("aria-hidden","false");
+}
+async function confirmMove(){
+  if(!state.pendingRoll) return;
+
+  const roll = state.pendingRoll;
+  state.pendingRoll = null;
+  moveBtn.disabled = true;
+  diceResultOverlay.classList.remove("show");
+  diceResultOverlay.setAttribute("aria-hidden","true");
+
+  statusText.textContent = `${roll}マス すすむよ`;
   await moveCurrentPlayer(roll);
 
   const p = state.players[state.current];
@@ -186,12 +213,14 @@ async function rollDice(){
     goalOverlay.classList.add("show");
     goalOverlay.setAttribute("aria-hidden","false");
     state.busy = false;
+    moveBtn.disabled = false;
     return;
   }
 
   const type = TILE_TYPES[p.position];
   await showShuffle(type);
   showTask(type);
+  moveBtn.disabled = false;
 }
 
 async function moveCurrentPlayer(steps){
@@ -357,12 +386,14 @@ function goToNextPlayer(){
   state.pendingTask = null;
   state.busy = false;
   diceLabel.textContent = "サイコロをふる";
-  diceFace.textContent = "⚄";
+  diceCube.classList.remove("show-1","show-2","show-3","show-4","show-5","show-6");
+  diceCube.classList.add("show-5");
   statusText.textContent = "サイコロをふってね";
   renderAll();
 }
 
 diceBtn.addEventListener("click",rollDice);
+moveBtn.addEventListener("click",confirmMove);
 document.getElementById("closeTaskBtn").addEventListener("click",closeTask);
 
 document.getElementById("goalCloseBtn").addEventListener("click",()=>{

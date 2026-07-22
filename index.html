@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#dff4ff">
   <title>みんなでかんがえよう！SSTすごろく</title>
-  <link rel="stylesheet" href="styles.css?v=1.1.0">
+  <link rel="stylesheet" href="styles.css?v=1.2.0">
 </head>
 <body>
   <main class="app">
@@ -50,7 +50,16 @@
           <div id="board" class="board" aria-label="すごろく盤"></div>
 
           <button id="diceBtn" class="dice-btn">
-            <span id="diceFace" class="dice-face">⚄</span>
+            <span class="dice-stage" aria-hidden="true">
+              <span id="diceCube" class="dice-cube show-5">
+                <span class="dice-side dice-front" data-face="1"></span>
+                <span class="dice-side dice-back" data-face="6"></span>
+                <span class="dice-side dice-right" data-face="3"></span>
+                <span class="dice-side dice-left" data-face="4"></span>
+                <span class="dice-side dice-top" data-face="2"></span>
+                <span class="dice-side dice-bottom" data-face="5"></span>
+              </span>
+            </span>
             <span id="diceLabel">サイコロをふる</span>
           </button>
         </section>
@@ -67,6 +76,24 @@
             <div><span class="legend-icon event">⭐</span>イベント</div>
           </div>
         </aside>
+      </div>
+    </section>
+
+    <section id="diceResultOverlay" class="overlay" aria-hidden="true">
+      <div class="dice-result-card">
+        <p class="dice-result-lead">いくつ でたかな？</p>
+        <div class="dice-result-stage" aria-hidden="true">
+          <div id="diceResultCube" class="dice-cube result-cube show-1">
+            <span class="dice-side dice-front" data-face="1"></span>
+            <span class="dice-side dice-back" data-face="6"></span>
+            <span class="dice-side dice-right" data-face="3"></span>
+            <span class="dice-side dice-left" data-face="4"></span>
+            <span class="dice-side dice-top" data-face="2"></span>
+            <span class="dice-side dice-bottom" data-face="5"></span>
+          </div>
+        </div>
+        <div id="diceResultNumber" class="dice-result-number">1</div>
+        <button id="moveBtn" class="primary-btn">このかずだけ すすむ</button>
       </div>
     </section>
 
@@ -107,7 +134,7 @@
     </section>
   </main>
 
-  <script src="questions.js?v=1.1.0"></script>
-  <script src="app.js?v=1.1.0"></script>
+  <script src="questions.js?v=1.2.0"></script>
+  <script src="app.js?v=1.2.0"></script>
 </body>
 </html>
