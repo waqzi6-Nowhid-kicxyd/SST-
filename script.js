@@ -25,6 +25,9 @@ const turnLabel=document.getElementById('turnLabel');
 const remainingLabel=document.getElementById('remainingLabel');
 const diceScreen=document.getElementById('diceScreen');
 const questionScreen=document.getElementById('questionScreen');
+const turnScreen=document.getElementById('turnScreen');
+const turnAnnouncement=document.getElementById('turnAnnouncement');
+const gameLayout=document.querySelector('.game-layout');
 const rollBtn=document.getElementById('rollBtn');
 const nextTurnBtn=document.getElementById('nextTurnBtn');
 
@@ -120,6 +123,7 @@ function renderAll(){
 function setTurnControls(canRoll,canNext){
   rollBtn.disabled=!canRoll;
   nextTurnBtn.disabled=!canNext;
+  gameLayout.classList.toggle('roll-ready',canRoll);
 }
 
 function showOverlay(el){
@@ -251,21 +255,34 @@ async function finishQuestion(){
 
   if(event==='again'){
     setTurnControls(true,false);
-  }else{
-    setTurnControls(false,true);
+    return;
   }
 
-  if(event==='skipDone'){
-    setTimeout(nextTurn,100);
-  }
+  await nextTurn(true);
 }
 
-function nextTurn(){
+async function showTurnAnnouncement(){
+  const p=players[current];
+  turnAnnouncement.textContent=`${p.name}さんの ばんだよ`;
+  showOverlay(turnScreen);
+  await sleep(3000);
+  hideOverlay(turnScreen);
+}
+
+async function nextTurn(showAnnouncement=false){
   if(isMoving||players.every(p=>p.pos>=20))return;
+  setTurnControls(false,false);
+
   do{
     current=(current+1)%players.length;
   }while(players[current].pos>=20&&players.some(p=>p.pos<20));
+
   renderAll();
+
+  if(showAnnouncement){
+    await showTurnAnnouncement();
+  }
+
   setTurnControls(true,false);
 }
 
@@ -289,8 +306,14 @@ function buildNameInputs(){
 
 rollBtn.addEventListener('click',rollDice);
 document.getElementById('moveBtn').addEventListener('click',moveCurrent);
-document.getElementById('questionDoneBtn').addEventListener('click',finishQuestion);
-nextTurnBtn.addEventListener('click',nextTurn);
+document.getElementById('questionCloseBtn').addEventListener('click',finishQuestion);
+nextTurnBtn.addEventListener('click',()=>nextTurn(true));
+
+gameLayout.addEventListener('click',event=>{
+  if(rollBtn.disabled||isMoving||questionOpen)return;
+  if(event.target.closest('button,select,input'))return;
+  rollDice();
+});
 
 document.getElementById('settingsBtn').addEventListener('click',()=>{
   if(isMoving)return;
