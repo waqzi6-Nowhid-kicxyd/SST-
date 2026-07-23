@@ -187,18 +187,18 @@ button{touch-action:manipulation}
 .modal h2{font-size:clamp(28px,3vw,58px);margin:.3em 0}
 .modal p{font-size:clamp(17px,1.65vw,31px);margin:.25em 0}
 .big-die{
-  width:clamp(180px,20vw,330px);aspect-ratio:1;border-radius:18%;
+  width:clamp(220px,24vw,400px);aspect-ratio:1;border-radius:18%;
   background:#fff;border:clamp(5px,.55vw,10px) solid #5c5f5e;
   box-shadow:0 1.1vw 0 #c4c8c7,0 2vw 3vw rgba(35,39,38,.2);
   display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);
   padding:14%;gap:5%;margin:1vw
 }
-.pip{width:58%;aspect-ratio:1;border-radius:50%;background:#464d4b;align-self:center;justify-self:center;opacity:0}
+.pip{width:66%;aspect-ratio:1;border-radius:50%;background:#464d4b;align-self:center;justify-self:center;opacity:0}
 .pip.on{opacity:1}
 .big-die.rolling{animation:roll .18s linear infinite}
 @keyframes roll{0%{transform:rotate(-5deg) scale(.98)}50%{transform:rotate(5deg) scale(1.03)}100%{transform:rotate(-5deg) scale(.98)}}
 .tap-note{margin-top:1.4em!important;font-weight:900;color:#6f5da6}
-.confirm-die{transform:scale(.72);margin:-2vw 0}
+.confirm-die{transform:scale(.88);margin:-1vw 0}
 .shuffle-stage{display:flex;align-items:center;justify-content:center;height:270px;width:100%;position:relative}
 .shuffle-card{
   --card-color:#bfe8ff;
@@ -466,5 +466,53 @@ button{touch-action:manipulation}
   }
   .main{
     padding-top:calc(env(safe-area-inset-top) + 62px);
+  }
+}
+
+
+/* v4.2：大型モニターでサイコロの出目を見やすくする */
+@media (min-width:1200px) and (orientation:landscape){
+  .big-die{
+    width:clamp(320px,28vw,500px);
+    border-width:clamp(8px,.7vw,12px);
+    padding:13%;
+    gap:4%;
+    margin:1.2vw;
+  }
+
+  .pip{
+    width:70%;
+  }
+
+  .confirm-die{
+    transform:scale(.92);
+    margin:-.5vw 0;
+  }
+
+  #diceModal h2,
+  #confirmOverlay .modal h2{
+    font-size:clamp(42px,3.8vw,72px);
+  }
+
+  #diceMessage,
+  #confirmOverlay .modal > p{
+    font-size:clamp(28px,2.2vw,42px);
+  }
+}
+
+/* iPhoneでは従来どおり画面内に収める */
+@media (orientation:portrait) and (max-width:900px){
+  .big-die{
+    width:clamp(190px,58vw,270px);
+    padding:14%;
+  }
+
+  .pip{
+    width:62%;
+  }
+
+  .confirm-die{
+    transform:scale(.78);
+    margin:-18px 0;
   }
 }
